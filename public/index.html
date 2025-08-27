@@ -11,7 +11,7 @@
     <button onclick="loadPix()">Gerar Pix</button>
     <br><br>
     <img id="pix" style="width:300px; height:300px;" />
-    
+
     <!-- Div do copia e cola -->
     <div id="pix-container" style="display:none; margin-top:20px;">
         <p id="pix-code" style="word-break: break-all; background:#f0f0f0; padding:10px; border-radius:5px;"></p>
@@ -28,7 +28,7 @@
                 payer_email: "picpaydomarkim2006@gmai.com"
             };
 
-            const res = await fetch("http://localhost:3000/pagar", {
+            const res = await fetch("https://fotografia.up.railway.app/pagar", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
