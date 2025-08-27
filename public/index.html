@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button onclick="loadPix()">Gerar Pix</button>
+    <br><br>
+    <img id="pix" style="width:300px; height:300px;" />
+    
+    <!-- Div do copia e cola -->
+    <div id="pix-container" style="display:none; margin-top:20px;">
+        <p id="pix-code" style="word-break: break-all; background:#f0f0f0; padding:10px; border-radius:5px;"></p>
+        <button onclick="copiarPix()">Copiar código Pix</button>
+    </div>
+
+    <script>
+        let pixcopia = "";
+
+        async function loadPix() {
+            const body = {
+                transaction_amount: "15",
+                description: "teste",
+                payer_email: "picpaydomarkim2006@gmai.com"
+            };
+
+            const res = await fetch("http://localhost:3000/pagar", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+
+            const data = await res.json();
+
+            // carrega a imagem base64 no <img>
+            document.getElementById("pix").src = "data:image/png;base64," + data.qr_code_base64;
+            
+            // salva e mostra o Pix copia e cola
+            pixcopia = data.qr_code;
+            document.getElementById("pix-code").innerText = pixcopia;
+            document.getElementById("pix-container").style.display = "block";
+        }
+
+        function copiarPix() {
+            navigator.clipboard.writeText(pixcopia)
+                .then(() => alert("Código Pix copiado!"))
+                .catch(err => console.error("Erro ao copiar Pix: ", err));
+        }
+    </script>
+</body>
+
+</html>
