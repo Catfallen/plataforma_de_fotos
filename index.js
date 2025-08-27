@@ -44,7 +44,7 @@ app.post('/pagar', async (req, res) => {
 });
 
 
-app.get('teste',(req,res)=>{
+app.get('/teste',(req,res)=>{
     res.send('teste');
 })
 app.listen(port, () => {
