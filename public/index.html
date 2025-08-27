@@ -1,56 +1,116 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <title>Gerar QR Code PIX</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 350px;
+    }
+
+    h1 {
+      font-size: 22px;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+      font-size: 14px;
+      transition: border 0.3s;
+    }
+
+    input:focus {
+      border: 1px solid #007bff;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    hr {
+      margin: 20px 0;
+      border: none;
+      height: 1px;
+      background: #ddd;
+    }
+
+    #qrcode {
+      width: 250px;
+      height: 250px;
+      margin-top: 15px;
+    }
+  </style>
 </head>
-
 <body>
-    <button onclick="loadPix()">Gerar Pix</button>
-    <br><br>
-    <img id="pix" style="width:300px; height:300px;" />
+  <div class="container">
+    <h1>Gerar QR Code PIX</h1>
+    
+    <input type="number" name="transaction_amount" placeholder="Valor (R$)">
+    <input type="email" name="payer_email" placeholder="E-mail do pagador">
+    <input type="text" name="description" placeholder="Descrição">
 
-    <!-- Div do copia e cola -->
-    <div id="pix-container" style="display:none; margin-top:20px;">
-        <p id="pix-code" style="word-break: break-all; background:#f0f0f0; padding:10px; border-radius:5px;"></p>
-        <button onclick="copiarPix()">Copiar código Pix</button>
-    </div>
+    <button onclick="gerarQR()">Gerar QR Code</button>
+    <hr>
+    <img id="qrcode" />
+  </div>
 
-    <script>
-        let pixcopia = "";
+  <script>
+    async function gerarQR() {
+      const amount = document.querySelector("[name='transaction_amount']").value;
+      const email = document.querySelector("[name='payer_email']").value;
+      const description = document.querySelector("[name='description']").value;
 
-        async function loadPix() {
-            const body = {
-                transaction_amount: "15",
-                description: "teste",
-                payer_email: "picpaydomarkim2006@gmai.com"
-            };
+      const body = { 
+        transaction_amount: amount, 
+        payer_email: email, 
+        description: description 
+      };
 
-            const res = await fetch("https://fotografia.up.railway.app/pagar", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body)
-            });
+      const res = await fetch("https://fotografia.up.railway.app//pagar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
 
-            const data = await res.json();
-
-            // carrega a imagem base64 no <img>
-            document.getElementById("pix").src = "data:image/png;base64," + data.qr_code_base64;
-            
-            // salva e mostra o Pix copia e cola
-            pixcopia = data.qr_code;
-            document.getElementById("pix-code").innerText = pixcopia;
-            document.getElementById("pix-container").style.display = "block";
-        }
-
-        function copiarPix() {
-            navigator.clipboard.writeText(pixcopia)
-                .then(() => alert("Código Pix copiado!"))
-                .catch(err => console.error("Erro ao copiar Pix: ", err));
-        }
-    </script>
+      const data = await res.json();
+      document.getElementById("qrcode").src = "data:image/png;base64," + data.qr_code_base64;
+    }
+  </script>
 </body>
-
 </html>
